@@ -21,7 +21,6 @@ def lambda_handler(event, context):
  
     f = "Finished DB Instance backup"
     if f in data['Event Message']:
-        print ("event message exists")
         snapcount = client.describe_db_snapshots(DBInstanceIdentifier=db_instance_name, MaxRecords=100)['DBSnapshots']
         if len (snapcount) > 0: 
             delc = 0
