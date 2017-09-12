@@ -5,7 +5,7 @@ data "archive_file" "create_lambda_package" {
   output_path = ".terraform/rds-snapshot.zip"
 }
 
-resource "aws_cloudwatch_event_rule" "take_snapshot" {
+resource "aws_cloudwatch_event_rule" "rds_snapshot" {
   name                = "${var.name}-${var.envname}-rds-snapshot"
   description         = "create rds snapshot"
   schedule_expression = "${var.cron_start_schedule}"
@@ -33,7 +33,7 @@ EOF
 }
 
 resource "aws_iam_policy" "lambda" {
-  name        = "${var.name}-${var.envname}-lambda-rds"
+  name        = "${var.name}-${var.envname}-lambda-rds-access"
   path        = "/"
   description = "lambda access to rds and cloudwatch"
 
@@ -62,7 +62,7 @@ EOF
 }
 
 resource "aws_iam_policy_attachment" "lambda_rds_access" {
-  name       = "${var.name}-${var.envname}-allow-access-to-rds"
+  name       = "${var.name}-${var.envname}-lambda-access-to-rds"
   roles      = ["${aws_iam_role.lambda.name}"]
   policy_arn = "${aws_iam_policy.lambda.arn}"
 }
@@ -84,8 +84,8 @@ resource "aws_lambda_function" "rds_snapshot" {
   }
 }
 
-resource "aws_cloudwatch_event_target" "take_snapshot" {
-  rule = "${aws_cloudwatch_event_rule.take_snapshot.name}"
+resource "aws_cloudwatch_event_target" "rds_snapshot" {
+  rule = "${aws_cloudwatch_event_rule.rds_snapshot.name}"
   arn  = "${aws_lambda_function.rds_snapshot.arn}"
 }
 
@@ -94,5 +94,5 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_call_rds_snapshot" {
   action        = "lambda:InvokeFunction"
   function_name = "${aws_lambda_function.rds_snapshot.function_name}"
   principal     = "events.amazonaws.com"
-  source_arn    = "${aws_cloudwatch_event_rule.take_snapshot.arn}"
+  source_arn    = "${aws_cloudwatch_event_rule.rds_snapshot.arn}"
 }
