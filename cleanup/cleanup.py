@@ -20,6 +20,7 @@ def lambda_handler(event, context):
     data = json.loads(message)
  
     f = "Finished DB Instance backup"
+    e = data['Event Message']
     if f in data['Event Message']:
         snapcount = client.describe_db_snapshots(DBInstanceIdentifier=db_instance_name, MaxRecords=100)['DBSnapshots']
         if len (snapcount) > 0: 
@@ -28,16 +29,16 @@ def lambda_handler(event, context):
                 if 'SnapshotCreateTime' in snapshot:
                     create_ts = snapshot['SnapshotCreateTime'].replace(tzinfo=None)
                     if create_ts < datetime.datetime.now() - datetime.timedelta(days=int(delete_snapshot_older_than)):
-                        print "Deleting snapshot id:%s" % snapshot['DBSnapshotIdentifier']
+                        print ("Deleting snapshot id:%s" % snapshot['DBSnapshotIdentifier'])
                         try:
                             response=client.delete_db_snapshot(DBSnapshotIdentifier=snapshot['DBSnapshotIdentifier'])
-                            print (response)
+                            print (e,response)
                             delc = delc+1
                         except Exception as e:
                              print (e)
             if delc == 0:
-                print ("no shapshots ready for deletion")
+                print "no shapshots ready for deletion"
         else:
-            print ("no snapshots found")
+            print "no snapshots found"
     else:
-        print ("ignoring notification")
+        print (e,"ignoring notification")
