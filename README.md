@@ -1,7 +1,8 @@
 tf-aws-lambda-rds-snapshot
 ========================
 
-This module is to be used as an alternative or in conjunction with rds automated backups
+This module is to be used as an alternative or in conjunction with rds automated backups.
+This module will take snapshots based on a cron schedule that you specify, it will also cleanup snapshots older than X number of days.
 
 
 
