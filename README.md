@@ -30,7 +30,7 @@ Variables
 
 - `name`                       - name of customer `(Required)`
 - `envname`                    - name of environment `(Required)`
-- `cron_start_schedule`        - use cron expression - default schedule is "cron(0 7   ? )" `(Required)`
+- `cron_start_schedule`        - use cron expression - example - "cron(0 12 * * ? *)" `(Required)`
 - `aws_region`                 - default region is "eu-west-1"
 - `db_id`                      - id of the rds instance `(Required)`
 - `db_instance_name`           - name of the rds instance `(Required)`
