@@ -2,13 +2,7 @@ variable "name" {}
 
 variable "envname" {}
 
-variable "cron_start_schedule" {
-  default = "cron(0 7 * * ? *)"
-}
-
-variable "service" {
-  default = "rds-snapshot"
-}
+variable "cron_start_schedule" {}
 
 variable "aws_region" {
   default = "eu-west-1"
