@@ -2,8 +2,11 @@ tf-aws-lambda-rds-snapshot
 ========================
 
 This module is to be used as an alternative or in conjunction with rds automated backups.
-This module will take snapshots based on a cron schedule that you specify, it will also cleanup snapshots older than X number of days.
+This module will take snapshots of an RDS Databse instance based on a cron schedule that you specify, it will also cleanup snapshots older than X number of days using the variable `delete_snapshot_older_than`. 
 
+Use cases
+    - automated snapshots are purged on DB instance deletion whereas manual snapshots are retained.
+    - automated snapshot retention is limited to 35 days whereas you can have up to 100 manual snapshots in a given region.
 
 
 Usage
@@ -40,4 +43,8 @@ Variables
 
 Outputs
 -------
+
+Improvements
+--------
+- post backup completion and deletion messages to customers slack channel
 
