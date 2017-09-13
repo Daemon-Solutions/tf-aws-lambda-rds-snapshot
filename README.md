@@ -7,6 +7,7 @@ This module will take snapshots of an RDS Databse instance based on a cron sched
 Use cases
     - automated snapshots are purged on DB instance deletion whereas manual snapshots are retained.
     - automated snapshot retention is limited to 35 days whereas you can have up to 100 manual snapshots in a given region.
+    - can call the module multiple times to have more than one snapshot per day if required
 
 
 Usage
@@ -47,4 +48,5 @@ Outputs
 Improvements
 --------
 - post backup completion and deletion messages to customers slack channel
+- multiple cron schedules
 
