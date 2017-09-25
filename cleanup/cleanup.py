@@ -10,7 +10,7 @@ def lambda_handler(event, context):
     client = boto3.client('rds')
     db_instance_name = os.environ['DBInstanceIdentifier']
     db_snapshot_name = "%s-%s" % (db_instance_name,datetime.datetime.now().strftime("%Y-%m-%d-%H-%M"))
-    delete_snapshot_older_than = os.environ['Days']
+    delete_snapshot_older_than = int(os.environ['Days'])
 
     db_describe = client.describe_db_instances(DBInstanceIdentifier=db_instance_name)
     db_status = db_describe['DBInstances'][0]['DBInstanceStatus'] 
@@ -18,21 +18,21 @@ def lambda_handler(event, context):
     print("Alert received from SNS")
     message = event['Records'][0]['Sns']['Message']
     data = json.loads(message)
- 
-    f = "Finished DB Instance backup"
-    e = data['Event Message']
-    if f in data['Event Message']:
-        snapcount = client.describe_db_snapshots(DBInstanceIdentifier=db_instance_name, MaxRecords=100)['DBSnapshots']
-        if len (snapcount) > 0: 
+    msg = "Finished DB Instance backup"
+    eventmsg = data['Event Message']
+
+    if msg in eventmsg:
+        snapshots = client.describe_db_snapshots(DBInstanceIdentifier=db_instance_name, MaxRecords=100)['DBSnapshots']
+        if len (snapshots) > 0: 
             delc = 0
-            for snapshot in client.describe_db_snapshots(DBInstanceIdentifier=db_instance_name, MaxRecords=100)['DBSnapshots']:
+            for snapshot in snapshots:
                 if 'SnapshotCreateTime' in snapshot:
-                    create_ts = snapshot['SnapshotCreateTime'].replace(tzinfo=None)
-                    if create_ts < datetime.datetime.now() - datetime.timedelta(days=int(delete_snapshot_older_than)):
+                    create_ts = snapshot['SnapshotCreateTime']
+                    if create_ts < datetime.datetime.now() - datetime.timedelta(days=delete_snapshot_older_than):
                         print ("Deleting snapshot id:%s" % snapshot['DBSnapshotIdentifier'])
                         try:
                             response=client.delete_db_snapshot(DBSnapshotIdentifier=snapshot['DBSnapshotIdentifier'])
-                            print (e,response)
+                            print (eventmsg,response)
                             delc = delc+1
                         except Exception as e:
                              print (e)
@@ -41,4 +41,4 @@ def lambda_handler(event, context):
         else:
             print "no snapshots found"
     else:
-        print (e,"ignoring notification")
+        print (eventmsg,"ignoring notification")
