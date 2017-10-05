@@ -13,7 +13,7 @@ This module will take snapshots of an RDS Databse instance based on a cron sched
 
 > Can call the module multiple times to have more than one snapshot per day if required
 
-
+<br />
 Usage
 -----
 
@@ -39,10 +39,12 @@ _Variables marked with **[*]** are mandatory._
 - `db_id` - The ID of the RDS instance you wish to take snapshots of. **[*]**
 - `db_instance_name` - The name of the RDS instance you wish to take snapshots of. **[*]**
 - `delete_snapshot_older_than` - The number of days that you want to retain RDS snapshots for. **[*]**
+<br />
 
 Outputs
 -------
 _None_
+<br />
 
 Future development tasks
 --------
